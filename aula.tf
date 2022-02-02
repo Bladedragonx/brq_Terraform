@@ -33,8 +33,25 @@ resource "aws_vpc" "vpc_brq" {
 
 resource "aws_internet_gateway" "BRQ_gate" {
     vpc_id = aws_vpc.vpc_brq.id
-
     tags = {
         Name = "Gateway_BRQ"
     }
+}
+
+resource "aws_route_table" "brq_route" {
+  vpc_id = aws_vpc.vpc_brq.id
+
+  route {
+    cidr_block = "0.0.0.0/24"
+    gateway_id = aws_internet_gateway.BRQ_gate.id
+  }
+
+  route {
+    ipv6_cidr_block        = "::/0"
+    gateway_id = aws_internet_gateway.BRQ_gate.id
+  }
+
+  tags = {
+    Name = "Route_BRQ"
+  }
 }
