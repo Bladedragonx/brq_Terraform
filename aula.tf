@@ -23,11 +23,18 @@ resource "aws_vpc" "vpc_brq" {
     }
 }
 
-resource "aws_subnet" "BRQ_Subrede" {
+# resource "aws_subnet" "BRQ_Subrede" {
+#     vpc_id = aws_vpc.vpc_brq.id
+#     cidr_block = "10.0.1.0/24"
+#     tags = {
+#       Name = "Subrede_BRQ"
+#     }
+# }
+
+resource "aws_internet_gateway" "BRQ_gate" {
     vpc_id = aws_vpc.vpc_brq.id
-    cidr_block = "10.0.1.0/24"
 
     tags = {
-      Name = "Subrede_BRQ"
+        Name = "Gateway_BRQ"
     }
 }
