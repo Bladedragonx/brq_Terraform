@@ -23,7 +23,7 @@ resource "aws_vpc" "vpc_brq" {
     }
 }
 
-resource "aws_subnet" "BRQ_Subrede" {
+resource "aws_subnet" "brq_subrede" {
     vpc_id = aws_vpc.vpc_brq.id
     cidr_block = "10.0.1.0/24"
     availability_zone = "us-east-1a"
@@ -39,20 +39,25 @@ resource "aws_internet_gateway" "BRQ_gate" {
     }
 }
 
-# resource "aws_route_table" "brq_route" {
-#   vpc_id = aws_vpc.vpc_brq.id
+resource "aws_route_table_association" "associacao" {
+  subnet_id = aws_subnet.brq_subrede.id
+  route_table_id = aws_route_table.brq_route.id
+}
 
-#   route {
-#     cidr_block = "0.0.0.0/24"
-#     gateway_id = aws_internet_gateway.BRQ_gate.id
-#   }
+resource "aws_route_table" "brq_route" {
+  vpc_id = aws_vpc.vpc_brq.id
 
-#   route {
-#     ipv6_cidr_block        = "::/0"
-#     gateway_id = aws_internet_gateway.BRQ_gate.id
-#   }
+  route {
+    cidr_block = "0.0.0.0/24"
+    gateway_id = aws_internet_gateway.BRQ_gate.id
+  }
 
-#   tags = {
-#     Name = "Route_BRQ"
-#   }
-# }
+  route {
+    ipv6_cidr_block        = "::/0"
+    gateway_id = aws_internet_gateway.BRQ_gate.id
+  }
+
+  tags = {
+    Name = "Route_BRQ"
+  }
+}
