@@ -61,3 +61,43 @@ resource "aws_route_table" "brq_route" {
     Name = "Route_BRQ"
   }
 }
+
+resource "aws_security_group" "firewall_brq" {
+  name        = "abrir portas"
+  description = "Abrir porta 22 (SSH), 443 (HTTPS) e 80 (HTTP)"
+  vpc_id      = aws_vpc.vpc_brq.id
+
+  ingress {
+    description      = "HTTPS"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+  ingress {
+    description      = "HTTP"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+  ingress {
+    description      = "SSH"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "brq_firewall"
+  }
+}
