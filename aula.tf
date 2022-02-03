@@ -11,10 +11,10 @@ provider "aws" {
     region = "us-east-1"
 }
 
-# resource "aws_instance" "helloworld" {
-#     ami = "ami-04505e74c0741db8d"
-#     instance_type = "t2.micro"
-# }
+resource "aws_instance" "helloworld" {
+    ami = "ami-04505e74c0741db8d"
+    instance_type = "t2.micro"
+}
 
 resource "aws_vpc" "vpc_brq" {
     cidr_block = "10.0.0.0/16"
@@ -32,7 +32,7 @@ resource "aws_subnet" "brq_subrede" {
     }
 }
 
-resource "aws_internet_gateway" "BRQ_gate" {
+resource "aws_internet_gateway" "brq_gate" {
     vpc_id = aws_vpc.vpc_brq.id
     tags = {
         Name = "Gateway_BRQ"
@@ -49,12 +49,12 @@ resource "aws_route_table" "brq_route" {
 
   route {
     cidr_block = "0.0.0.0/24"
-    gateway_id = aws_internet_gateway.BRQ_gate.id
+    gateway_id = aws_internet_gateway.brq_gate.id
   }
 
   route {
     ipv6_cidr_block        = "::/0"
-    gateway_id = aws_internet_gateway.BRQ_gate.id
+    gateway_id = aws_internet_gateway.brq_gate.id
   }
 
   tags = {
@@ -111,3 +111,12 @@ resource "aws_network_interface" "interface_brq" {
     Name = "BRQ_Interface"
   }
 }
+
+resource "aws_eip" "brq_pub_ip" {
+  vpc = true
+  network_interface         = aws_network_interface.interface_brq.id
+  instance                  = aws_instance.helloworld.id
+  associate_with_private_ip = "10.0.1.51"
+  depends_on                = [aws_internet_gateway.brq_gate]
+}
+
