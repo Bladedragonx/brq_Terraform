@@ -101,3 +101,13 @@ resource "aws_security_group" "firewall_brq" {
     Name = "brq_firewall"
   }
 }
+
+resource "aws_network_interface" "interface_brq" {
+  subnet_id       = aws_subnet.brq_subrede.id
+  private_ips     = ["10.0.1.51"]
+  security_groups = [aws_security_group.firewall_brq.id]
+
+  tags = {
+    Name = "BRQ_Interface"
+  }
+}
