@@ -11,6 +11,11 @@ provider "aws" {
     region = "us-east-1"
 }
 
+variable "aws_ip_public" {
+  description = "Ip Publico da AWS"
+  type = string
+}
+
 resource "aws_vpc" "vpc_brq" {
     cidr_block = "10.0.0.0/16"
     tags = {
@@ -99,7 +104,7 @@ resource "aws_security_group" "firewall_brq" {
 
 resource "aws_network_interface" "interface_brq" {
 	subnet_id       = aws_subnet.brq_subrede.id
-	private_ips     = ["10.0.1.51"]
+	private_ips     = [var.aws_ip_public]
 	security_groups = [aws_security_group.firewall_brq.id]
 	tags = {
 		Name = "BRQ_Interface"
@@ -109,7 +114,7 @@ resource "aws_network_interface" "interface_brq" {
 resource "aws_eip" "brq_pub_ip" {
 	vpc                       = true
 	network_interface         = aws_network_interface.interface_brq.id
-	associate_with_private_ip = "10.0.1.51"
+	associate_with_private_ip = var.aws_ip_public
 	depends_on                = [aws_internet_gateway.brq_gate]
 }
 
